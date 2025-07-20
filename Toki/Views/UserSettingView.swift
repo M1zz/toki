@@ -9,7 +9,35 @@ import Foundation
 import SwiftUI
 
 struct UserSettingView: View {
+    @AppStorage("ringMode") private var ringMode: RingMode = .sound
+    @AppStorage("pushEnabled") private var pushEnabled: Bool = true
+    @AppStorage("toastEnabled") private var toastEnabled: Bool = true
+
     var body: some View {
-        Text("알림방식 선택(소리/진동+푸시알림)과 그 외에 뭐 후원받기창같은거 여기 때려넣으시죠")
+        Form {
+            Picker("notice", selection: $ringMode) {
+                ForEach(RingMode.allCases) { mode in
+                    Text(mode.rawValue).tag(mode)
+                }
+            }
+            .pickerStyle(.segmented)
+
+            Toggle("푸시 알림 보내기", isOn: $pushEnabled)
+            
+            Toggle("토스트 알림 보내기", isOn: $toastEnabled)
+
+            Button("ring() Test") {
+                ring()
+            }
+            Button("pushNotice() Test - 4초뒤 푸시수신") {
+                DispatchQueue.main.asyncAfter(deadline: .now() + 4) {
+                    pushNotice()
+                }
+            }
+        }
     }
+}
+
+#Preview {
+    UserSettingView()
 }
